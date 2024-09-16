@@ -9,6 +9,7 @@ import jakarta.validation.constraints.Size;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -61,10 +62,11 @@ public class UserController {
 
     @PutMapping("/{userTag}/edit")
     public ResponseEntity<UserDto> editUser(@PathVariable String userTag, @Valid @Email String email,
-                                            @Valid @Size(max = 50) String fullName) throws Exception {
+                                            @Valid @Size(max = 50) String fullName,
+                                            @RequestParam("profilePic") MultipartFile file) throws Exception {
         User user = userService.findUserByUserTag(userTag);
 
-        userService.updateUser(userTag, email, fullName);
+        userService.updateUser(userTag, email, fullName, file);
         UserDto userCreated = convertToDto(user);
         return ResponseEntity.ok(userCreated);
     }

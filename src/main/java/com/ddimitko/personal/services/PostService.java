@@ -6,6 +6,9 @@ import com.ddimitko.personal.models.User;
 import com.ddimitko.personal.repositories.CommentRepository;
 import com.ddimitko.personal.repositories.PostRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -13,11 +16,13 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final UserService userService;
+    private final PictureService pictureService;
     private final CommentRepository commentRepository;
 
-    public PostService(final PostRepository postRepository, final UserService userService, CommentRepository commentRepository) {
+    public PostService(final PostRepository postRepository, final UserService userService, PictureService pictureService, CommentRepository commentRepository) {
         this.postRepository = postRepository;
         this.userService = userService;
+        this.pictureService = pictureService;
         this.commentRepository = commentRepository;
     }
 
@@ -30,19 +35,21 @@ public class PostService {
         return postRepository.findById(postId).orElseThrow();
     }
 
-    public Post createPost(String content, String userTag) throws Exception {
+    public Post createPost(String content, String userTag, List<MultipartFile> files) throws Exception {
 
         User user = userService.findUserByUserTag(userTag);
         Post post = new Post();
         post.setUser(user);
         post.setContent(content);
+        pictureService.uploadPostPicture(post, files);
         //post.setSubmissionDate(LocalDateTime.now());
         return postRepository.save(post);
     }
 
-    public void editPost(Long postId, String content) {
+    public void editPost(Long postId, String content, List<MultipartFile> files) throws IOException {
         Post post = postRepository.findById(postId).orElseThrow();
         post.setContent(content);
+        pictureService.uploadPostPicture(post, files);
         postRepository.save(post);
     }
 

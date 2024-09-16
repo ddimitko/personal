@@ -12,7 +12,7 @@ import org.hibernate.annotations.OnDeleteAction;
 
 import java.io.Serializable;
 import java.time.Instant;
-import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -33,11 +33,15 @@ public class Post implements Serializable {
     @JsonIdentityReference(alwaysAsId = true)*/
     private User user;
 
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_id")
+    private List<Picture> pictureList = new ArrayList<>();
+
     @NotNull
     private String content;
-    private String imageUrl;
 
     @CreationTimestamp
+    @Column(updatable = false)
     private Instant createdAt;
 
     @OneToMany(mappedBy = "post")

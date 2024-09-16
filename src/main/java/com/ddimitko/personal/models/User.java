@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -32,11 +34,14 @@ public class User implements Serializable{
     private String userTag;
 
     private String fullName;
-    private String photoUrl;
 
     @CreationTimestamp
     @Column(updatable = false)
     private Date createdAt;
+
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @JoinColumn(name = "profile_picture_id")
+    private Picture profilePicture;
 
     @OneToMany(mappedBy = "user")
     private List<Post> postList;

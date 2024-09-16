@@ -32,6 +32,7 @@ public class Comment implements Serializable {
     private Post post;
 
     @CreationTimestamp
+    @Column(updatable = false)
     private Instant createdAt;
 
 }

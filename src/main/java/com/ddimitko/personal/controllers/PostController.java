@@ -7,7 +7,9 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -49,15 +51,15 @@ public class PostController {
     }
 
     @PostMapping("/post")
-    public ResponseEntity<PostDto> createPost(@RequestParam String content, @RequestParam String userTag) throws Exception {
-        Post post = postService.createPost(content, userTag);
+    public ResponseEntity<PostDto> createPost(@RequestParam String content, @RequestParam String userTag, @RequestParam("files")List<MultipartFile> files) throws Exception {
+        Post post = postService.createPost(content, userTag, files);
         PostDto postDto = modelMapper.map(post, PostDto.class);
         return ResponseEntity.ok(postDto);
     }
 
     @PutMapping("/{postId}/editPost")
-    public ResponseEntity editPost(@PathVariable Long postId, @RequestParam String content) {
-        postService.editPost(postId, content);
+    public ResponseEntity editPost(@PathVariable Long postId, @RequestParam String content, @RequestParam("files") List<MultipartFile> files) throws IOException {
+        postService.editPost(postId, content, files);
         return ResponseEntity.ok().build();
     }
 

@@ -5,6 +5,7 @@ import com.ddimitko.personal.models.User;
 import com.ddimitko.personal.repositories.UserRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -12,10 +13,12 @@ import java.util.List;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PictureService pictureService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
 
-    public UserService(final UserRepository userRepository) {
+    public UserService(final UserRepository userRepository, PictureService pictureService) {
         this.userRepository = userRepository;
+        this.pictureService = pictureService;
     }
 
 
@@ -32,12 +35,16 @@ public class UserService {
         }
     }
 
-    public User updateUser(String userTag, String email, String fullName) throws Exception {
+    public User updateUser(String userTag, String email, String fullName, MultipartFile file) throws Exception {
         User user = findUserByUserTag(userTag);
         user.setFullName(fullName);
 
         if(email != null && !email.isEmpty()){
             user.setEmail(email);
+        }
+
+        if(file != null && !file.isEmpty()){
+            pictureService.uploadProfilePicture(user, file);
         }
 
         return userRepository.save(user);
