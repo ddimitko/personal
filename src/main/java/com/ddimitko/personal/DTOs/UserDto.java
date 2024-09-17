@@ -14,6 +14,8 @@ public class UserDto {
     @Size(max = 50)
     private String fullName;
 
+    private String profilePicture;
+
     @Email
     private String email;
 

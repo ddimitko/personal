@@ -42,8 +42,10 @@ public class UserController {
         }
         else{
             List<User> users = userService.findAllUsers();
-            return ResponseEntity.ok(users.stream().map(this::convertToDto)
-                    .collect(Collectors.toList()));
+            List<UserDto> userDtoList = users.stream()
+                    .map(this::convertToDto) // Use the convertToDto method
+                    .collect(Collectors.toList());
+            return ResponseEntity.ok(userDtoList);
         }
     }
     @GetMapping("/{userTag}")

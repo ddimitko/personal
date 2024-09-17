@@ -15,6 +15,7 @@ public class PostDto {
     private String createdAt;
 
     private String userTag;
+    private List<PictureDto> pictures;
     private List<CommentDto> comments;
 
 }

@@ -30,7 +30,7 @@ public class Post implements Serializable {
     @JsonIdentityReference(alwaysAsId = true)*/
     private User user;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "post_id")
     private List<Picture> pictureList = new ArrayList<>();
 

@@ -57,17 +57,19 @@ public class PictureService {
     public void uploadProfilePicture(User user, MultipartFile file) throws Exception {
 
         byte[] compressedImage = compressImage(file);
-        Picture profilePicture = new Picture();
-        profilePicture.setImageData(compressedImage);
+        Picture newProfilePicture = new Picture();
+        newProfilePicture.setImageData(compressedImage);
 
         // Check if the user already has a profile photo
         if (user.getProfilePicture() != null) {
+            Picture oldProfilePicture = user.getProfilePicture();
             // Remove the old profile photo (orphanRemoval will handle the actual deletion)
             user.setProfilePicture(null);
+            pictureRepository.delete(oldProfilePicture);
         }
 
 
-        user.setProfilePicture(profilePicture);
+        user.setProfilePicture(newProfilePicture);
     }
 
     public void uploadPostPicture(Post post, List<MultipartFile> files) throws IOException {

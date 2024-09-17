@@ -37,7 +37,7 @@ public class User implements Serializable{
     @Column(updatable = false)
     private Date createdAt;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "profile_picture_id")
     private Picture profilePicture;
 
