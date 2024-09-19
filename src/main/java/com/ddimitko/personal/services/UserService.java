@@ -3,14 +3,20 @@ package com.ddimitko.personal.services;
 import com.ddimitko.personal.DTOs.SignupDto;
 import com.ddimitko.personal.models.User;
 import com.ddimitko.personal.repositories.UserRepository;
+import jakarta.transaction.Transactional;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class UserService {
+@Transactional
+public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final PictureService pictureService;
@@ -23,16 +29,17 @@ public class UserService {
 
 
     public User addUser(SignupDto signupDto) throws Exception {
-        if(userRepository.findUserByUserTag(signupDto.getUserTag()).isEmpty()){
-            User user = new User();
-            user.setUserTag(signupDto.getUserTag());
-            user.setEmail(signupDto.getEmail());
-            user.setPassword(bCryptPasswordEncoder.encode(signupDto.getPassword()));
-            return userRepository.save(user);
+        if (userExists(signupDto.getUserTag())) {
+            throw new RuntimeException("User already exists");
         }
-        else{
-            throw new Exception("User already exists");
-        }
+
+        User user = new User();
+        user.setUserTag(signupDto.getUserTag());
+        user.setPassword(bCryptPasswordEncoder.encode(signupDto.getPassword()));
+        user.setEmail(signupDto.getEmail());
+
+        userRepository.save(user);
+        return user;
     }
 
     public User updateUser(String userTag, String email, String fullName, MultipartFile file) throws Exception {
@@ -79,4 +86,11 @@ public class UserService {
         }
     }
 
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = userRepository.findUserByUserTag(username).orElseThrow(() ->
+                new UsernameNotFoundException("User with usertag does not exist"));
+
+        return new org.springframework.security.core.userdetails.User(username, user.getPassword(), new ArrayList<>());
+    }
 }
