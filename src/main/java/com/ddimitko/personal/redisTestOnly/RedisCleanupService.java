@@ -1,6 +1,5 @@
 package com.ddimitko.personal.redisTestOnly;
 
-import jakarta.annotation.PreDestroy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -22,6 +21,6 @@ public class RedisCleanupService implements ApplicationListener<ApplicationReady
     @Override
     public void onApplicationEvent(ApplicationReadyEvent event) {
         logger.info("Clearing Redis data...");
-        redisTemplate.getConnectionFactory().getConnection().flushDb();
+        redisTemplate.getConnectionFactory().getConnection().serverCommands().flushDb();
     }
 }

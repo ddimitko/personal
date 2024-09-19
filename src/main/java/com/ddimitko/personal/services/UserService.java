@@ -1,6 +1,5 @@
 package com.ddimitko.personal.services;
 
-import com.ddimitko.personal.DTOs.SignupDto;
 import com.ddimitko.personal.models.User;
 import com.ddimitko.personal.repositories.UserRepository;
 import jakarta.transaction.Transactional;
@@ -25,21 +24,6 @@ public class UserService implements UserDetailsService {
     public UserService(final UserRepository userRepository, PictureService pictureService) {
         this.userRepository = userRepository;
         this.pictureService = pictureService;
-    }
-
-
-    public User addUser(SignupDto signupDto) throws Exception {
-        if (userExists(signupDto.getUserTag())) {
-            throw new RuntimeException("User already exists");
-        }
-
-        User user = new User();
-        user.setUserTag(signupDto.getUserTag());
-        user.setPassword(bCryptPasswordEncoder.encode(signupDto.getPassword()));
-        user.setEmail(signupDto.getEmail());
-
-        userRepository.save(user);
-        return user;
     }
 
     public User updateUser(String userTag, String email, String fullName, MultipartFile file) throws Exception {
