@@ -22,9 +22,9 @@ public class AuthController {
 
     // POST /login
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginDto loginDto) {
+    public ResponseEntity<?> login(@RequestBody LoginDto loginDto, HttpServletRequest request) {
         try {
-            JwtResponse jwtResponse = authService.login(loginDto.getUserTag(), loginDto.getPassword());
+            JwtResponse jwtResponse = authService.login(loginDto.getUserTag(), loginDto.getPassword(), request);
             return ResponseEntity.ok(jwtResponse);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());

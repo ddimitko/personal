@@ -6,7 +6,6 @@ import jakarta.transaction.Transactional;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,7 +18,6 @@ public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final PictureService pictureService;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
 
     public UserService(final UserRepository userRepository, PictureService pictureService) {
         this.userRepository = userRepository;

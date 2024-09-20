@@ -5,6 +5,8 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.io.Decoders;
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -23,6 +25,7 @@ public class JwtTokenUtil {
     @Value("${jwt.access-token-expiration}")
     private long accessTokenExpiration;
 
+    @Getter
     @Value("${jwt.refresh-token-expiration}")
     private long refreshTokenExpiration;
 
@@ -34,18 +37,18 @@ public class JwtTokenUtil {
 
     public String generateAccessToken(String userTag) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("token_type", "access");
+        claims.put("type", "access");
         return createToken(claims, userTag, accessTokenExpiration);
     }
 
     public String generateRefreshToken(String userTag) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("token_type", "refresh");
+        claims.put("type", "refresh");
         return createToken(claims, userTag, refreshTokenExpiration);
     }
 
     public boolean isAccessToken(String token) {
-        return "access".equals(getClaimFromToken(token, claims -> claims.get("token_type")));
+        return "access".equals(getClaimFromToken(token, claims -> claims.get("type")));
     }
 
     // This method creates the JWT token with claims, subject (userTag), and expiration
@@ -67,6 +70,16 @@ public class JwtTokenUtil {
     // Get token's expiration date
     public Date getExpirationDateFromToken(String token) {
         return getClaimFromToken(token, Claims::getExpiration);
+    }
+
+    public String getTokenFromAuthorizationHeader(HttpServletRequest request) {
+        final String authorizationHeader = request.getHeader("Authorization");
+
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            return authorizationHeader.substring(7); // Extract the JWT token from the "Bearer " prefix
+        }
+
+        return null;
     }
 
     // Validate the JWT token
